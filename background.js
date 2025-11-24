@@ -28,6 +28,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === "get_sync_state") {
+    sendResponse({ 
+      isSyncing: pairedTabs.length === 2,
+      pairedTabs: pairedTabs
+    });
+    return true;
+  }
+
   if (request.action === "scrolled") {
     if (pairedTabs.length < 2) return;
 

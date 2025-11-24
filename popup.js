@@ -10,9 +10,29 @@ chrome.tabs.query({ currentWindow: true }, (tabs) => {
     selectSecondTab.add(option.cloneNode(true));
   });
 
-  if (selectSecondTab.options.length > 1) {
-    selectSecondTab.selectedIndex = 1;
-  }
+  chrome.storage.local.get(['lastTab1', 'lastTab2'], (result) => {
+    const lastTab1 = result.lastTab1;
+    const lastTab2 = result.lastTab2;
+
+    if (lastTab1) {
+      const option1 = Array.from(selectFirstTab.options).find(opt => opt.value === String(lastTab1));
+      if (option1) selectFirstTab.value = lastTab1;
+    }
+
+    if (lastTab2) {
+      const option2 = Array.from(selectSecondTab.options).find(opt => opt.value === String(lastTab2));
+      if (option2) selectSecondTab.value = lastTab2;
+    } else if (selectSecondTab.options.length > 1) {
+      selectSecondTab.selectedIndex = 1;
+    }
+
+    chrome.runtime.sendMessage({ action: "get_sync_state" }, (response) => {
+      if (response.isSyncing) {
+        updateStatus("Sync active!");
+        toggleButtons(true);
+      }
+    });
+  });
 });
 
 document.getElementById('startBtn').addEventListener('click', () => {
@@ -23,6 +43,11 @@ document.getElementById('startBtn').addEventListener('click', () => {
     updateStatus("Error: Please select two different tabs!");
     return;
   }
+
+  chrome.storage.local.set({ 
+    lastTab1: firstTabId, 
+    lastTab2: secondTabId 
+  });
 
   chrome.runtime.sendMessage({ 
     action: "start_sync", 
