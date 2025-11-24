@@ -32,7 +32,7 @@ This is an open-source project. Contributions are welcome! Feel free to:
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE.md).
+This project is open source and available under the [MIT License](https://github.com/lucas-franke/SplitViewSync/blob/main/LICENSE).
 
 ## Support
 
